@@ -53,15 +53,22 @@
         <div class="players-info">
           <div id="player-1-info" class="player-info">
             <span class="player-name">Player 1</span>
-            <span class="player-status">-</span>
+            <span class="player-status"><span class="color-dot color-pink"></span>Pink inputs</span>
           </div>
           <div id="player-2-info" class="player-info">
             <span class="player-name">Player 2</span>
-            <span class="player-status">-</span>
+            <span class="player-status"><span class="color-dot color-cyan"></span>Cyan inputs</span>
           </div>
         </div>
         <div class="game-timer">
           <p>Time: <span id="timer">00:00</span></p>
+        </div>
+        <div id="color-picker" class="color-picker" aria-label="Input color">
+          <button class="color-swatch" data-color="pink" style="--swatch-color: #ec4899;" title="Pink" aria-label="Pink"></button>
+          <button class="color-swatch" data-color="cyan" style="--swatch-color: #06b6d4;" title="Cyan" aria-label="Cyan"></button>
+          <button class="color-swatch" data-color="purple" style="--swatch-color: #8b5cf6;" title="Purple" aria-label="Purple"></button>
+          <button class="color-swatch" data-color="amber" style="--swatch-color: #f59e0b;" title="Amber" aria-label="Amber"></button>
+          <button class="color-swatch" data-color="green" style="--swatch-color: #22c55e;" title="Green" aria-label="Green"></button>
         </div>
       </div>
 
@@ -71,7 +78,6 @@
           <div id="sudoku-board" class="sudoku-board"></div>
           <div class="input-controls">
             <button id="clear-btn" class="btn btn-small">Clear</button>
-            <button id="candidates-btn" class="btn btn-small">Toggle Candidates</button>
             <button id="check-btn" class="btn btn-small btn-primary">Check Complete</button>
           </div>
         </div>

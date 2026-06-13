@@ -18,6 +18,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Game rooms storage
 const gameRooms = {};
+const allowedPlayerColors = new Set(['pink', 'cyan', 'purple', 'amber', 'green']);
 
 // Test sudoku puzzle
 const testPuzzle = [
@@ -67,6 +68,7 @@ io.on('connection', (socket) => {
     gameRooms[roomId].players.push({
       id: socket.id,
       nickname: `Player ${gameRooms[roomId].players.length + 1}`,
+      color: 'pink',
       board: JSON.parse(JSON.stringify(gameRooms[roomId].puzzle))
     });
     
@@ -91,23 +93,28 @@ io.on('connection', (socket) => {
     room.players.push({
       id: socket.id,
       nickname: `Player ${room.players.length + 1}`,
+      color: 'cyan',
       board: JSON.parse(JSON.stringify(room.puzzle))
     });
 
+    if (room.players.length === 2) {
+      room.gameState = 'active';
+      room.startedAt = Date.now();
+    }
+
     // Notify all players in the room
     io.to(roomId).emit('player-joined', {
-      players: room.players.map(p => ({ id: p.id, nickname: p.nickname })),
+      players: room.players.map(p => ({ id: p.id, nickname: p.nickname, color: p.color })),
       totalPlayers: room.players.length,
       puzzle: room.puzzle,
       gameState: room.gameState
     });
 
     if (room.players.length === 2) {
-      room.gameState = 'active';
       io.to(roomId).emit('game-started', { gameState: 'active' });
     }
 
-    callback({ success: true, roomId });
+    callback({ success: true, roomId, gameState: room.gameState });
   });
 
   // Player makes a move
@@ -123,12 +130,12 @@ io.on('connection', (socket) => {
       player.board[row][col].value = value;
     }
 
-    // Broadcast move to all players in the room
-    io.to(roomId).emit('move-made', {
+    // Only tell opponents whether a square has been filled, not the value.
+    socket.to(roomId).emit('move-made', {
       playerId: socket.id,
       row,
       col,
-      value,
+      filled: value !== null,
       playerNickname: player.nickname
     });
   });
@@ -145,12 +152,27 @@ io.on('connection', (socket) => {
       player.board[row][col].candidates = candidates;
     }
 
-    // Broadcast candidate update
-    io.to(roomId).emit('candidates-updated', {
+    socket.to(roomId).emit('candidates-updated', {
       playerId: socket.id,
       row,
       col,
-      candidates
+      hasCandidates: candidates.length > 0 && candidates.length < 9
+    });
+  });
+
+  socket.on('update-player-color', (data) => {
+    const { roomId, color } = data;
+    const room = gameRooms[roomId];
+
+    if (!room || !allowedPlayerColors.has(color)) return;
+
+    const player = room.players.find(p => p.id === socket.id);
+    if (!player) return;
+
+    player.color = color;
+    io.to(roomId).emit('player-color-updated', {
+      playerId: socket.id,
+      color
     });
   });
 
@@ -170,6 +192,7 @@ io.on('connection', (socket) => {
         io.to(roomId).emit('player-completed', {
           playerId: socket.id,
           playerNickname: player.nickname,
+          elapsedMs: room.startedAt ? player.completedAt - room.startedAt : null,
           timestamp: player.completedAt
         });
       }
@@ -183,7 +206,7 @@ io.on('connection', (socket) => {
     const room = gameRooms[roomId];
     if (room) {
       callback({
-        players: room.players.map(p => ({ id: p.id, nickname: p.nickname })),
+        players: room.players.map(p => ({ id: p.id, nickname: p.nickname, color: p.color })),
         gameState: room.gameState,
         puzzle: room.puzzle
       });
@@ -206,7 +229,7 @@ io.on('connection', (socket) => {
           delete gameRooms[roomId];
         } else {
           io.to(roomId).emit('player-left', {
-            players: room.players.map(p => ({ id: p.id, nickname: p.nickname })),
+          players: room.players.map(p => ({ id: p.id, nickname: p.nickname, color: p.color })),
             totalPlayers: room.players.length
           });
         }

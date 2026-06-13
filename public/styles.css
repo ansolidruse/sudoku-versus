@@ -243,6 +243,8 @@ header p {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  border-left: 4px solid transparent;
+  padding-left: 12px;
 }
 
 .player-name {
@@ -252,14 +254,74 @@ header p {
 }
 
 .player-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.9rem;
   color: #666;
+  text-transform: capitalize;
+}
+
+.player-info.current-player {
+  border-left-color: var(--primary-color);
+}
+
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.color-pink {
+  background: #ec4899;
+}
+
+.color-cyan {
+  background: #06b6d4;
+}
+
+.color-purple {
+  background: #8b5cf6;
+}
+
+.color-amber {
+  background: #f59e0b;
+}
+
+.color-green {
+  background: #22c55e;
 }
 
 .game-timer {
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--text-color);
+}
+
+.color-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-swatch {
+  width: 28px;
+  height: 28px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: var(--swatch-color);
+  cursor: pointer;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+.color-swatch:hover,
+.color-swatch.selected {
+  border-color: var(--thick-line);
+}
+
+.color-swatch.selected {
+  transform: scale(1.08);
 }
 
 .game-boards {
@@ -347,13 +409,22 @@ header p {
   background: #dcfce7;
 }
 
+.sudoku-cell.solved-value {
+  color: #15803d;
+}
+
+.sudoku-cell.opponent-filled {
+  background: #bbf7d0;
+  box-shadow: inset 0 0 0 2px var(--success-color);
+}
+
 /* Thick borders for 3x3 boxes */
 .sudoku-cell:nth-child(3n) {
   border-right: 3px solid var(--thick-line);
 }
 
 .sudoku-cell:nth-child(9n) {
-  border-right: none;
+  border-right: 3px solid var(--thick-line);
 }
 
 /* Fix: Rows 6-8 should have thick bottom border (cells 46-54, which is n + 46 to n + 54) */
@@ -419,6 +490,10 @@ header p {
   margin-bottom: 20px;
 }
 
+.completion-message.error p {
+  color: var(--danger-color);
+}
+
 @keyframes slideUp {
   from {
     transform: translate(-50%, -30%);
@@ -454,6 +529,10 @@ header p {
   .game-header {
     flex-direction: column;
     gap: 15px;
+  }
+
+  .color-picker {
+    justify-content: center;
   }
 
   .players-info {

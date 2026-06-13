@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sudoku Versus - Two Player Battle</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎮 Sudoku Versus</h1>
+      <p>Battle another player to complete the puzzle first!</p>
+    </header>
+
+    <!-- Menu Screen -->
+    <div id="menu-screen" class="screen active">
+      <div class="menu-box">
+        <h2>Welcome to Sudoku Versus</h2>
+        <div class="input-group">
+          <label for="player-name">Your Name:</label>
+          <input type="text" id="player-name" placeholder="Enter your name" value="Player">
+        </div>
+        <button id="create-btn" class="btn btn-primary">Create Game</button>
+        <div class="divider">OR</div>
+        <div class="input-group">
+          <label for="room-id">Room ID:</label>
+          <input type="text" id="room-id" placeholder="Enter room ID to join">
+        </div>
+        <button id="join-btn" class="btn btn-secondary">Join Game</button>
+      </div>
+    </div>
+
+    <!-- Waiting Screen -->
+    <div id="waiting-screen" class="screen">
+      <div class="waiting-box">
+        <h2>Waiting for Opponent...</h2>
+        <div id="room-display" class="room-display">
+          <p>Room ID: <strong id="current-room-id">-</strong></p>
+          <p class="copy-hint">📋 Share this ID with your opponent</p>
+        </div>
+        <div id="players-list" class="players-list">
+          <p>Players: <span id="player-count">1</span>/2</p>
+        </div>
+        <div class="spinner"></div>
+        <button id="cancel-btn" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+      <div class="game-header">
+        <div class="players-info">
+          <div id="player-1-info" class="player-info">
+            <span class="player-name">Player 1</span>
+            <span class="player-status">-</span>
+          </div>
+          <div id="player-2-info" class="player-info">
+            <span class="player-name">Player 2</span>
+            <span class="player-status">-</span>
+          </div>
+        </div>
+        <div class="game-timer">
+          <p>Time: <span id="timer">00:00</span></p>
+        </div>
+      </div>
+
+      <div class="game-boards">
+        <div class="board-container">
+          <h3 id="my-board-title">My Board</h3>
+          <div id="sudoku-board" class="sudoku-board"></div>
+          <div class="input-controls">
+            <button id="clear-btn" class="btn btn-small">Clear</button>
+            <button id="candidates-btn" class="btn btn-small">Toggle Candidates</button>
+            <button id="check-btn" class="btn btn-small btn-primary">Check Complete</button>
+          </div>
+        </div>
+
+        <div class="board-container opponent">
+          <h3>Opponent's Board</h3>
+          <div id="opponent-board" class="sudoku-board opponent-board"></div>
+        </div>
+      </div>
+
+      <div id="completion-message" class="completion-message hidden">
+        <p id="completion-text"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Socket.IO Client -->
+  <script src="https://cdn.socket.io/4.7.0/socket.io.min.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

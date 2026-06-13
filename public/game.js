@@ -265,6 +265,9 @@ function selectCell(row, col, cellEl) {
 
 function handleRightClick(e, row, col) {
   e.preventDefault();
+  const cell = gameState.board[row][col];
+  if (cell.isGiven) return;
+  
   gameState.selectedCell = [row, col];
   renderBoard();
 }
@@ -321,18 +324,26 @@ document.addEventListener('keydown', (e) => {
     renderBoard();
   } else if (key === 'ArrowUp') {
     e.preventDefault();
-    if (row > 0) selectCell(row - 1, col, null);
+    navigateToCell(row - 1, col);
   } else if (key === 'ArrowDown') {
     e.preventDefault();
-    if (row < 8) selectCell(row + 1, col, null);
+    navigateToCell(row + 1, col);
   } else if (key === 'ArrowLeft') {
     e.preventDefault();
-    if (col > 0) selectCell(row, col - 1, null);
+    navigateToCell(row, col - 1);
   } else if (key === 'ArrowRight') {
     e.preventDefault();
-    if (col < 8) selectCell(row, col + 1, null);
+    navigateToCell(row, col + 1);
   }
 });
+
+// Navigate to cell, including given cells (but don't allow editing them)
+function navigateToCell(row, col) {
+  if (row < 0 || row > 8 || col < 0 || col > 8) return;
+  
+  gameState.selectedCell = [row, col];
+  renderBoard();
+}
 
 // Initialize on load
 window.addEventListener('load', () => {

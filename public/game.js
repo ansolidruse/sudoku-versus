@@ -211,16 +211,12 @@ function renderBoard() {
         }
         
         cellEl.addEventListener('click', () => selectCell(row, col, cellEl));
-        cellEl.addEventListener('keydown', (e) => handleKeyPress(e, row, col));
         cellEl.addEventListener('contextmenu', (e) => handleRightClick(e, row, col));
       }
       
       boardContainer.appendChild(cellEl);
     }
   }
-  
-  // Add keyboard input after rendering
-  addKeyboardListeners();
 }
 
 function renderOpponentBoard() {
@@ -267,8 +263,19 @@ function selectCell(row, col, cellEl) {
   renderBoard();
 }
 
-function handleKeyPress(e, row, col) {
+function handleRightClick(e, row, col) {
+  e.preventDefault();
+  gameState.selectedCell = [row, col];
+  renderBoard();
+}
+
+// Global keyboard listener - works when any cell is selected
+document.addEventListener('keydown', (e) => {
+  if (!gameState.selectedCell || !gameState.gameActive) return;
+  
+  const [row, col] = gameState.selectedCell;
   const cell = gameState.board[row][col];
+  
   if (cell.isGiven) return;
 
   const key = e.key;
@@ -325,23 +332,7 @@ function handleKeyPress(e, row, col) {
     e.preventDefault();
     if (col < 8) selectCell(row, col + 1, null);
   }
-}
-
-function handleRightClick(e, row, col) {
-  e.preventDefault();
-  gameState.selectedCell = [row, col];
-  renderBoard();
-}
-
-function addKeyboardListeners() {
-  if (gameState.selectedCell) {
-    const [row, col] = gameState.selectedCell;
-    const cellEl = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-    if (cellEl) {
-      cellEl.focus();
-    }
-  }
-}
+});
 
 // Initialize on load
 window.addEventListener('load', () => {

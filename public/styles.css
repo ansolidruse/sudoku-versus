@@ -356,8 +356,9 @@ header p {
   border-right: none;
 }
 
+/* Fix: Rows 6-8 should have thick bottom border (cells 46-54, which is n + 46 to n + 54) */
 .sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
-.sudoku-cell:nth-child(n + 55):nth-child(-n + 63) {
+.sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {
   border-bottom: 3px solid var(--thick-line);
 }
 
